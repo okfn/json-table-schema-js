@@ -1,14 +1,13 @@
 /// <reference types="csv-parse" />
 declare module "tableschema" {
     import { Stream } from "stream";
-    import { read } from "fs";
     import parser from "csv-parse";
     type SchemaDescriptor = string | object;
 
-    interface ExtendedRow {
-        rowNumber: number;
-        headers: string[];
-        columns: any[];
+    interface ExtendedRow extends Array<any>{
+        [0]: number; //rowNumber
+        [1]: string[]; // headers
+        [2]: any[]; //columns
     }
 
     type row = any[] | KeyValuePair | ExtendedRow | TableSchemaError;
@@ -16,7 +15,6 @@ declare module "tableschema" {
     interface TSTableLoadOpts {
         schema?: SchemaDescriptor;
         strict?: boolean;
-        caseSensitive?: boolean;
         headers?: number | string[],
     }
 
@@ -32,7 +30,7 @@ declare module "tableschema" {
         relations?: object;
     }
 
-    interface IterOpts extends IterReadOpts{
+    interface IterOpts extends IterReadOpts {
         stream?: boolean;
     }
 
@@ -41,14 +39,14 @@ declare module "tableschema" {
     }
 
     // not sure limit is opt
-    interface ReadOpts extends IterReadOpts{       
+    interface ReadOpts extends IterReadOpts {
         limit?: number;
     }
 
     interface KeyedOpts extends IterReadOpts {
         keyed: true;
     }
-    
+
     interface ExtendedOpts extends IterReadOpts {
         extended: true;
     }
@@ -62,7 +60,9 @@ declare module "tableschema" {
         rowNumber?: number;
         columnNumber?: number;
         // not documented
-        message: string; 
+        message: string;
+        headerNames: string[];
+        fieldNames: string[];
     }
 
     interface FunctionToStream {

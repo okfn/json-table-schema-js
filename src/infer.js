@@ -17,8 +17,7 @@ const { Table } = require('./table')
  * @returns {Object} returns schema descriptor
  */
 async function infer(source, options = {}) {
-  const table = await Table.load(source, options)
-  const descriptor = await table.infer({ limit: options.limit })
+  const descriptor = await (await Table.load(source, options)).infer({ limit: options.limit })
   return descriptor
 }
 

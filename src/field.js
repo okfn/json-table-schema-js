@@ -176,21 +176,26 @@ class Field {
     const cast = bind(this.castValue, this, bind.placeholder, { constraints: false })
     for (const [name, constraint] of Object.entries(this.constraints)) {
       let castConstraint = constraint
+      const func = constraints[`check${upperFirst(name)}`]
 
       // Cast enum constraint
       if (['enum'].includes(name)) {
         try {
           if (!Array.isArray(constraint)) throw new TableSchemaError('Array is required')
-          castConstraint = constraint.map(cast)
+          if (this.descriptor.type === 'array') {
+            // skip check, individual enum values are not arrays
+            if (func) checks[name] = bind(func, null, constraint)
+          } else {
+            castConstraint = constraint.map(cast)
+            if (func) checks[name] = bind(func, null, castConstraint)
+          }
         } catch (error) {
           throw new TableSchemaError(
             `Enum constraint "${constraint}" is not valid: ${error.message}`
           )
         }
-      }
-
-      // Cast maximum/minimum constraint
-      if (['maximum', 'minimum'].includes(name)) {
+        // Cast maximum/minimum constraint
+      } else if (['maximum', 'minimum'].includes(name)) {
         try {
           castConstraint = cast(constraint)
         } catch (error) {
@@ -198,11 +203,10 @@ class Field {
             `Maximum/minimum constraint "${constraint}" is not valid: ${error.message}`
           )
         }
+        if (func) checks[name] = bind(func, null, castConstraint)
+      } else {
+        if (func) checks[name] = bind(func, null, castConstraint)
       }
-
-      // Get check function
-      const func = constraints[`check${upperFirst(name)}`]
-      if (func) checks[name] = bind(func, null, castConstraint)
     }
     return checks
   }

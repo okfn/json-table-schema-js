@@ -1,5 +1,5 @@
 // Weird mocha/karma discrepancy on this import
-const ExtendableError = require('es6-error').default || require('es6-error') // eslint-disable-line
+const ExtendableError = require('es6-error').default || require('es6-error')
 
 // Module API
 

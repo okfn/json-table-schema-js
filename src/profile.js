@@ -61,7 +61,7 @@ class Profile {
   constructor(profile) {
     this._profile = profile
     try {
-      this._jsonschema = require(`./profiles/${profile}.json`) // eslint-disable-line
+      this._jsonschema = require(`./profiles/${profile}.json`)
     } catch (error) {
       throw new TableSchemaError(`Can't load profile "${profile}"`)
     }

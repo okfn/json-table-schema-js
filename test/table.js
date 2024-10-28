@@ -344,6 +344,7 @@ Paris;48.85,2.30;2.244
       const table = await Table.load('data/data_parse_options_delimiter.csv', {
         delimiter: ';',
       })
+
       const rows = await table.read({ extended: true, limit: 1 })
       assert.deepEqual(rows[0], [2, ['id', 'age', 'name'], ['1', '39', 'Paul']])
     })
