@@ -62,6 +62,18 @@ describe('Field', () => {
     assert.equal(field.testValue('inactive'), true)
   })
 
+  it('should parse descriptor with "enum" constraint in array', () => {
+    const field = new Field({
+      name: 'status',
+      type: 'array',
+      constraints: {
+        enum: ['active', 'inactive'],
+      },
+    })
+    assert.equal(field.testValue(['active']), true)
+    assert.equal(field.testValue(['inactive']), true)
+  })
+
   it('should parse descriptor with "minimum" constraint', () => {
     const field = new Field({
       name: 'length',

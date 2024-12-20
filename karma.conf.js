@@ -1,4 +1,4 @@
-const webpackConfig = require('./webpack.config.js')
+const webpackConfig = require('./webpack.dev.js')
 delete webpackConfig.entry
 
 // Base
@@ -7,7 +7,7 @@ const karmaConfig = (config) => {
   config.set({
     singleRun: true,
     browsers: ['jsdom'],
-    frameworks: ['mocha', 'sinon-chai'],
+    frameworks: ['webpack', 'mocha', 'sinon-chai'],
     files: ['test/karma.opts'],
     reporters: ['spec'],
     preprocessors: {

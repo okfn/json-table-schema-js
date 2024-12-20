@@ -1,6 +1,6 @@
 const fs = require('fs')
 const axios = require('axios')
-const csv = require('csv-parse/lib/es5')
+const csv = require('csv-parse')
 const through2 = require('through2')
 const { Readable, PassThrough } = require('stream')
 const zip = require('lodash/zip')
@@ -75,7 +75,7 @@ class Table {
       headers,
       format,
       encoding,
-      ...parserOptions,
+      parserOptions,
     })
   }
 
@@ -415,7 +415,7 @@ async function createRowStream(source, encoding, parserOptions) {
 
   // Parse CSV unless it's already parsed
   if (!isArray(source)) {
-    if (parserOptions.delimiter === undefined) {
+    if (parserOptions && parserOptions.delimiter === undefined) {
       const csvDelimiterDetector = createCsvDelimiterDetector(parser)
       stream.pipe(csvDelimiterDetector)
     }
@@ -443,8 +443,13 @@ function createCsvDelimiterDetector(csvParser) {
 
   detector.on('data', (chunk) => {
     if (!done) {
-      let delimiter = sniffer.sniff(chunk.toString()).delimiter || ','
-      if (delimiter.match(/[a-zA-Z0-9+]/)) delimiter = ','
+      const sniffed = sniffer.sniff(chunk.toString())
+      let delimiter = (sniffed && sniffed.delimiter) || ','
+
+      if (delimiter.match(/[a-zA-Z0-9+]/)) {
+        delimiter = ','
+      }
+
       csvParser.options.delimiter = Buffer.from(delimiter, 'utf-8')
       done = true
     }
